@@ -87,7 +87,7 @@
     </div>
   </div>
 
-  <button onclick="initMap()">ルート変更</button>
+  <button id="startBtn">ルート作成</button>
 
   <script>
     let map;
@@ -198,7 +198,11 @@
   </script>
 
   <!-- 必ずAPIキーをあなたのものに書き換えてね！ -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgHDP5ocf8VRTKb0Bal1iX0pXK4VmeLvM&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgHDP5ocf8VRTKb0Bal1iX0pXK4VmeLvM" async defer></script>
 
+  <script>
+    document.getElementById('startBtn').addEventListener('click', initMap);
+  </script>
+  
 </body>
 </html>
