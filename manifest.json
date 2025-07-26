@@ -8,12 +8,12 @@
   "theme_color": "#D9FF66",
   "icons": [
     {
-      "src": "./app-icon_192.png", // 修正: ドットスラッシュ
+      "src": "/my-walking-app/app-icon_192.png", // 修正: ドットスラッシュ
       "sizes": "192x192", // 追加！
       "type": "image/png"
     },
     {
-      "src": "./app-icon_512.png", // 修正: ドットスラッシュ
+      "src": "/my-walking-app/app-icon_512.png", // 修正: ドットスラッシュ
       "sizes": "512x512",
       "type": "image/png"
     }
