@@ -1,21 +1,21 @@
 {
-    "name": "RANDOM WALK",      // アプリの名前（ホーム画面に表示される名前）
-    "short_name": "R-WALK",   // 短い名前（スペースがないときに表示される名前）
-    "description": "お散歩ルートを自動で作成", // アプリの説明
-    "start_url": "/index.html",    // アプリを起動したときに最初に開くページのURL
-    "display": "standalone",       // アプリのように全画面表示にする
-    "background_color": "#ffffff", // アプリの起動時の背景色
-    "theme_color": "#D9FF66",      // アプリのテーマカラー（ツールバーなどの色）
-    "icons": [                     // アプリのアイコン
-      {
-        "src": "app-icon_192.png", // アイコン画像のパス（192x192ピクセル）
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "app-icon_512.png", // アイコン画像のパス（512x512ピクセル）
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ]
-  }
+  "name": "RANDOM WALK",
+  "short_name": "R-WALK",
+  "description": "お散歩ルートを自動で作成",
+  "start_url": "./", // 修正: ドットスラッシュ
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#D9FF66",
+  "icons": [
+    {
+      "src": "./app-icon_192.png", // 修正: ドットスラッシュ
+      "sizes": "192x192", // 追加！
+      "type": "image/png"
+    },
+    {
+      "src": "./app-icon_512.png", // 修正: ドットスラッシュ
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
