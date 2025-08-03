@@ -2,103 +2,165 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Random Walk</title>
-  <link rel="manifest" href="/my-walking-app/manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>おさんぽアプリ</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
   <style>
     html, body {
       margin: 0;
-      padding: 0;
-      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-      height: 100vh;  /* 画面の高さに合わせる */
-      color: #2e3d26;
-      text-align: center;
-
-      background-image: url("background.png");
-      background-repeat: no-repeat;   /* 背景は1回だけ */
-      background-position: center top;
-      background-size: cover;          /* 画面いっぱいに広げる */
-      background-attachment: fixed;  /* スクロールしても背景を動かさない */
-
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      height: 100vh;
+      font-family: sans-serif;
+      background: url(background.png);
+      overflow: hidden;
     }
 
-    #map {
-      height: 585px;
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+    
+    .tittle-route {
+      width: 90%;
+    }
+
+
+
+    #map, #mapFinal {
       width: 90%;
       max-width: 500px;
-      margin: 105px auto 18px auto;
-      border-radius: 20px;
+      height: 80vh;
+      margin: 10px 0;
+      border-radius: 16px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+
     }
 
     .info-area {
       display: flex;
       justify-content: center;
-      gap: 40px;
-      align-items: center;
-      font-size: 16px;
-      font-weight: bold;
-      margin: 18px;
+      gap: 10px;
+      margin: 20px 0;
     }
 
     .info-block {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      text-align: center;
     }
 
-    .info-block img {
-      width: 28px;
-      height: 28px;
+    .km-back{
+      width:10vw;
+      height: auto;
+      max-width: 160px;
     }
 
-    .info-block span {
-      font-size: 32px;
+    .steps-back{
+      width:10vw;
+      height: auto;
+      max-width: 160px;
+    }
+    
+    .km-box,.steps-box {
+      margin: 20px 110px 0px 0px;
+      color: #dffe0f;
+      font-size: 50px;
+      font-weight: bold;
+      text-align: right;
     }
 
-    button {
-      background-color: #2e3d26;
-      color: white;
-      padding: 14px 32px;
-      border: none;
-      border-radius: 32px;
-      font-size: 18px;
+
+    .info-btn{
+      margin: 0px 100px;
+    }
+
+    .icon-btn {
+      width: 45%;
+      margin: 10px;
       cursor: pointer;
-      margin-bottom: 40px;
     }
 
-    button:hover {
-      background-color: #405c35;
+    #endBtn {
+      padding: 14px 28px;
+      border-radius: 28px;
+      border: none;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
+  <!-- スタート画面 -->
+  <div id="startScreen" class="screen active">
+    <img src="tittle-logo.png" id="tittle-logo" class="start_logo" >
+    <img src="start_button.png" id="startRouteBtn" class="icon-btn" alt="ルートを作成する">
+  </div>
 
-  <div id="map">MAP</div>
-
-  <div class="info-area">
-    <div class="info-block">
-      <img src="distance.svg" alt="距離" />
-      <div><span id="distance">0.0</span> KM</div>
+  <!-- ルート作成画面 -->
+  <div id="routeScreen" class="screen">
+    <img src="tittle-logo.png" class="tittle-route" id="tittle-logo">
+    <div id="map">MAP</div>
+    <div class="info-area">
+      <div class="info-block">
+        <img src="km-back.png" alt="距離表示" class="stats-img" />
+        <div class="km-box" id="distance">0.00</div>
+      </div>
+      <div class="info-block">
+        <img src="steps-back.png" alt="距離表示" class="stats-img" />
+        <div class="steps-box" id="steps">0</div>
+      </div>
     </div>
-    <div class="info-block">
-      <img src="steps.svg" alt="歩数" />
-      <div><span id="steps">0</span> STEP</div>
+    <div class="info-btn">
+      <img src="change_route.png" id="changeRouteBtn" class="icon-btn" alt="ルート変更">
+      <img src="confirm_route.png" id="confirmRouteBtn" class="icon-btn" alt="決定">
     </div>
   </div>
 
-  <button id="startBtn">ルート作成</button>
+  <!-- 現在地確認画面 -->
+  <div id="finalScreen" class="screen">
+    <div id="mapFinal">MAP</div>
+    <div class="info-area">
+      <div class="info-block">
+        <img src="km_back.png">
+        <div class="info-distance" id="distanceFinal">0.00</div>
+      </div>
+      <div class="info-block">
+        <img src="steps_back.png" >
+        <div class="info-steps" id="stepsFinal">0</div> 
+      </div>
+    </div>
+    <img src="finish_button.png" id="endBtn" class="icon-btn" alt="終了">
+  </div>
+
+  <!-- Google Maps API（※あなたのAPIキーに変えてね） -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgHDP5ocf8VRTKb0Bal1iX0pXK4VmeLvM" defer></script>
 
   <script>
-    let map;
-    let directionsService;
-    let directionsRendererGo;
-
+    let map, mapFinal, directionsService, directionsRendererGo;
     const TARGET_DISTANCE = 3000;
     const TOLERANCE = 500;
-    const MAX_RETRY = 5;
+
+    const screens = {
+      start: document.getElementById("startScreen"),
+      route: document.getElementById("routeScreen"),
+      final: document.getElementById("finalScreen")
+    };
+
+    function showScreen(name) {
+      Object.values(screens).forEach(s => s.classList.remove("active"));
+      screens[name].classList.add("active");
+    }
 
     function moveLatLng(lat, lng, distanceMeters, angleDegrees) {
       const R = 6378137;
@@ -111,8 +173,8 @@
     }
 
     function generateRoute(start, attempt = 1) {
-      if (attempt > MAX_RETRY) {
-        alert("目標距離に合うルートを見つけられませんでした😢");
+      if (attempt > 5) {
+        alert("ルートを生成できませんでした");
         return;
       }
 
@@ -126,27 +188,22 @@
           { location: wp1, stopover: true },
           { location: wp2, stopover: true }
         ],
-        travelMode: google.maps.TravelMode.WALKING,
-        optimizeWaypoints: false
+        travelMode: google.maps.TravelMode.WALKING
       }, (result, status) => {
-        if (status !== "OK") {
-          alert("ルート取得失敗");
-          return;
-        }
+        if (status !== "OK") return;
 
         let total = 0;
-        result.routes[0].legs.forEach(leg => {
-          total += leg.distance.value;
-        });
-
+        result.routes[0].legs.forEach(leg => total += leg.distance.value);
         const km = (total / 1000).toFixed(2);
         const steps = Math.round(total / 100 * 140);
 
         document.getElementById("distance").innerText = km;
         document.getElementById("steps").innerText = steps.toLocaleString();
 
+        document.getElementById("distanceFinal").innerText = km;
+        document.getElementById("stepsFinal").innerText = steps.toLocaleString();
+
         if (Math.abs(total - TARGET_DISTANCE) > TOLERANCE) {
-          console.log("距離がずれているため再生成");
           generateRoute(start, attempt + 1);
           return;
         }
@@ -161,61 +218,68 @@
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const start = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: start,
+          zoom: 16
+        });
+
+        new google.maps.Marker({ position: start, map, title: "スタート" });
+
+        directionsService = new google.maps.DirectionsService();
+        directionsRendererGo = new google.maps.DirectionsRenderer({
+          map: map,
+          suppressMarkers: true,
+          polylineOptions: { strokeColor: "blue", strokeWeight: 4 }
+        });
+
+        generateRoute(start);
+      });
+    }
+
+    document.getElementById("startRouteBtn").addEventListener("click", () => {
+      showScreen("route");
+      initMap();
+    });
+
+    document.getElementById("changeRouteBtn").addEventListener("click", () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
           const start = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
+          generateRoute(start);
+        });
+      }
+    });
 
-          map = new google.maps.Map(document.getElementById("map"), {
-            center: start,
+    document.getElementById("confirmRouteBtn").addEventListener("click", () => {
+      showScreen("final");
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const current = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          mapFinal = new google.maps.Map(document.getElementById("mapFinal"), {
+            center: current,
             zoom: 16
           });
-
-          new google.maps.Marker({
-            position: start,
-            map: map,
-            title: "スタート地点"
-          });
-
-          directionsService = new google.maps.DirectionsService();
-
-          directionsRendererGo = new google.maps.DirectionsRenderer({
-            map: map,
-            polylineOptions: {
-              strokeColor: "blue",
-              strokeWeight: 5
-            },
-            suppressMarkers: true
-          });
-
-          generateRoute(start);
-        },
-        () => {
-          alert("位置情報の取得を許可してください");
-        }
-      );
-    }
-  </script>
-
-  <!-- 必ずAPIキーをあなたのものに書き換えてね！ -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgHDP5ocf8VRTKb0Bal1iX0pXK4VmeLvM" async defer></script>
-
-  <script>
-    document.getElementById('startBtn').addEventListener('click', initMap);
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/my-walking-app/sw.js').then(function(registration) {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function(err) {
-          console.log('ServiceWorker registration failed: ', err);
+          new google.maps.Marker({ position: current, map: mapFinal, title: "現在地" });
         });
-      });
-    }
+      }
+    });
+
+    document.getElementById("endBtn").addEventListener("click", () => {
+      alert("おつかれさまでした！");
+      location.reload(); // アプリ終了風
+    });
   </script>
-  
 </body>
 </html>
