@@ -33,58 +33,125 @@
       display: flex;
     }
     
+    .start_logo{
+      width: 95%;
+      margin:40px 0;
+    }
+
+    .start-btn{
+      width: 45%;
+    }
+
+
+
     .tittle-route {
       width: 90%;
     }
 
 
-
-    #map, #mapFinal {
+    #map {
       width: 90%;
       max-width: 500px;
-      height: 80vh;
-      margin: 10px 0;
+      height: 800px;
+      margin: 10px 0 5px 0;
       border-radius: 16px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 
     }
 
+    #mapFinal {
+      width: 100%;
+      max-width: 500px;
+      height: 750px;
+      margin: -20px 0 5px 0;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
     .info-area {
+      width: 90%;
+      max-width: 350px;
+      margin: 5px 0;
       display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      
     }
 
-    .info-block {
-      text-align: center;
+    .info-back{
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
+    .info-text{
+      margin-top: 345px;
+      position: absolute;
+      top: 50%;
+      left: 45%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: row; /* ← ここが「横並び」のポイント！ */
+      justify-content: flex-start;
+      z-index: 1;
+      width: 100%;
+    }
     
-    .km-box,.steps-box {
-      margin: 20px 110px 0px 0px;
+    .km-text {
       color: #dffe0f;
-      font-size: 50px;
+      font-size: 40px;
       font-weight: bold;
-      text-align: right;
+      width: 180px;
+      margin-left:30px;
+      margin-right: auto;
+    }
+
+    .steps-text {
+      color: #dffe0f;
+      font-size: 40px;
+      font-weight: bold;
+      width: 180px;
+      margin-right: 60px;
+      margin-left: auto;
     }
 
 
     .info-btn{
-      margin: 0px 100px;
+      margin: 0px 30px;
+      gap: 100px;
     }
 
     .icon-btn {
-      width: 45%;
-      margin: 10px;
-      cursor: pointer;
+      width: 30%;
+      height: auto;
+    }
+
+    .fkm-text {
+      color: #dffe0f;
+      font-size: 40px;
+      font-weight: bold;
+      width: 180px;
+      margin-top: 40px;
+      margin-left:30px;
+      margin-right: auto;
+    }
+
+    .fsteps-text {
+      color: #dffe0f;
+      font-size: 40px;
+      font-weight: bold;
+      width: 180px;
+      margin-top: 40px;
+      margin-right: 60px;
+      margin-left: auto;
     }
 
     #endBtn {
-      padding: 14px 28px;
-      border-radius: 28px;
-      border: none;
-      margin-top: 20px;
+      padding: 0% 28px;
+      height: 50px;
+      width: auto;
+      margin-top: 0%;
     }
   </style>
 </head>
@@ -93,21 +160,22 @@
   <!-- スタート画面 -->
   <div id="startScreen" class="screen active">
     <img src="tittle-logo.png" id="tittle-logo" class="start_logo" >
-    <img src="start_button.png" id="startRouteBtn" class="icon-btn" alt="ルートを作成する">
+    <img src="start_button.png" id="startRouteBtn" class="start-btn" alt="ルートを作成する">
   </div>
 
   <!-- ルート作成画面 -->
   <div id="routeScreen" class="screen">
     <img src="tittle-logo.png" class="tittle-route" id="tittle-logo">
     <div id="map">MAP</div>
+
     <div class="info-area">
-      <img src="info-back.png">
-      <div class="info-block">
-        <div class="km-box" id="distance">0.00</div>
+      
+      <img src="info-back.png" class="info-back">
+      <div class="info-text">
+        <div class="km-text" id="distance">0.00</div>
+        <div class="steps-text" id="steps">0</div>
       </div>
-      <div class="info-block">
-        <div class="steps-box" id="steps">0</div>
-      </div>
+
     </div>
     <div class="info-btn">
       <img src="change_route.png" id="changeRouteBtn" class="icon-btn" alt="ルート変更">
@@ -118,16 +186,17 @@
   <!-- 現在地確認画面 -->
   <div id="finalScreen" class="screen">
     <div id="mapFinal">MAP</div>
+
     <div class="info-area">
-      <div class="info-block">
-        <img src="km_back.png">
-        <div class="info-distance" id="distanceFinal">0.00</div>
+      
+     <img src="info-back.png" class="info-back">
+     <div class="info-text">
+       <div class="fkm-text" id="distanceFinal">0.00</div>
+       <div class="fsteps-text" id="stepsFinal">0</div> 
       </div>
-      <div class="info-block">
-        <img src="steps_back.png" >
-        <div class="info-steps" id="stepsFinal">0</div> 
-      </div>
+
     </div>
+
     <img src="finish_button.png" id="endBtn" class="icon-btn" alt="終了">
   </div>
 
@@ -136,6 +205,10 @@
 
   <script>
     let map, mapFinal, directionsService, directionsRendererGo;
+    let walkedPath = [];
+    let walkedLine = null;
+    let currentMarker = null;
+
     const TARGET_DISTANCE = 3000;
     const TOLERANCE = 500;
 
@@ -205,7 +278,7 @@
         alert("位置情報が使えません");
         return;
       }
-
+      
       navigator.geolocation.getCurrentPosition((position) => {
         const start = {
           lat: position.coords.latitude,
@@ -225,10 +298,63 @@
           suppressMarkers: true,
           polylineOptions: { strokeColor: "blue", strokeWeight: 4 }
         });
+        
+        // ✅ watchPosition をここで開始
+        navigator.geolocation.watchPosition((position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
 
-        generateRoute(start);
+          // 現在地マーカーを表示・更新
+          if (!currentMarker) {
+            currentMarker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 6,
+                fillColor: "red",
+                fillOpacity: 1,
+                strokeColor: "white",
+                strokeWeight: 2
+              }
+            });
+          } else {
+            currentMarker.setPosition(pos);
+          }
+
+          // 歩いた経路を保存
+          walkedPath.push(pos);
+
+          // 赤い線で歩いたルートを描画
+          if (!walkedLine) {
+            walkedLine = new google.maps.Polyline({
+              path: walkedPath,
+              geodesic: true,
+              strokeColor: "red",
+              strokeOpacity: 1.0,
+              strokeWeight: 3,
+              map: map
+            });
+          } else {
+            walkedLine.setPath(walkedPath);
+          } 
+        }, (error) => {
+          alert("位置情報が取得できません: " + error.message);
+        }, {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000
+
+        });
+
       });
     }
+  
+
+
+
 
     document.getElementById("startRouteBtn").addEventListener("click", () => {
       showScreen("route");
